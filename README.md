@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js 16 Template
 
-## Getting Started
+## Requirements
 
-First, run the development server:
+- [fnm](https://github.com/Schniz/fnm)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Usage
+
+Before the application can be started, you need to install the necessary tools.
+
+```sh
+fnm use  # set node version
+corepack enable && corepack prepare  # set package manager
+pnpm i  # install dependencies
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+You can start a local postgres instance using docker compose:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+docker compose up -d postgres
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+You can generate and run migrations like this:
 
-## Learn More
+```sh
+pnpm db:generate
+pnpm db:migrate
+```
 
-To learn more about Next.js, take a look at the following resources:
+You can now start the application:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sh
+pnpm dev
+pnpm dev:turbo  # better dev experience with turbopack
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Code checks and format:
 
-## Deploy on Vercel
+Checks:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sh
+pnpm checks
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Code format:
+
+```sh
+pnpm format
+```
