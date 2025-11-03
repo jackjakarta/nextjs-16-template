@@ -28,19 +28,3 @@ export async function dbCreateUser(data: InsertUserModel): Promise<UserModel | u
 
   return user;
 }
-
-export async function dbUpdateUserName({
-  userId,
-  name,
-}: {
-  userId: string;
-  name: string;
-}): Promise<UserModel | undefined> {
-  const [user] = await db
-    .update(userTable)
-    .set({ name })
-    .where(eq(userTable.id, userId))
-    .returning();
-
-  return user;
-}
