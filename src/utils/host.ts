@@ -12,10 +12,12 @@ export async function getHostFromHeaders() {
 }
 
 export async function getBaseUrlFromHeaders() {
-  const host = await getHostFromHeaders();
-  const isLocalhost = host === 'localhost:3000' || host === '127.0.0.1:3000';
-  const prefix = isLocalhost ? 'http' : 'https';
-  const baseUrl = `${prefix}://${host}`;
+  const _headers = await headers();
+  const baseUrl = _headers.get('origin');
+
+  if (baseUrl === null) {
+    throw new Error('Origin header not found');
+  }
 
   return baseUrl;
 }
