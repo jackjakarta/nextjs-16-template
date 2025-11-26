@@ -1,5 +1,7 @@
 import { headers } from 'next/headers';
 
+const LOCALHOSTS = ['localhost:3000', '127.0.0.1:3000'];
+
 export async function getHostFromHeaders() {
   const _headers = await headers();
   const host = _headers.get('host');
@@ -12,19 +14,16 @@ export async function getHostFromHeaders() {
 }
 
 export async function getBaseUrlFromHeaders() {
-  const _headers = await headers();
-  const baseUrl = _headers.get('origin');
-
-  if (baseUrl === null) {
-    throw new Error('Origin header not found');
-  }
+  const host = await getHostFromHeaders();
+  const baseUrlPrefix = LOCALHOSTS.includes(host) ? 'http' : 'https';
+  const baseUrl = `${baseUrlPrefix}://${host}`;
 
   return baseUrl;
 }
 
 export async function checkIsLocalhost() {
   const host = await getHostFromHeaders();
-  const isLocalhost = host === 'localhost:3000' || host === '127.0.0.1:3000';
+  const isLocalhost = LOCALHOSTS.includes(host);
 
   return isLocalhost;
 }
