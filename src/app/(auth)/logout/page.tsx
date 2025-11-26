@@ -7,19 +7,29 @@ import React from 'react';
 export default function Page() {
   const router = useRouter();
 
-  async function signOut() {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push('/login');
-        },
-      },
-    });
-  }
-
   React.useEffect(() => {
-    signOut();
-  }, []);
+    let cancelled = false;
+
+    async function doSignOut() {
+      try {
+        await authClient.signOut({
+          fetchOptions: {
+            onSuccess: () => {
+              if (!cancelled) router.replace('/login');
+            },
+          },
+        });
+      } catch (err) {
+        console.error('Sign-out error:', err);
+      }
+    }
+
+    doSignOut();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
 
   return null;
 }
