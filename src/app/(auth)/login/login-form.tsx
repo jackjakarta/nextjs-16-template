@@ -41,7 +41,7 @@ export default function LoginForm() {
     });
 
     if (error !== null) {
-      setError('root', { type: 'server', message: error.message });
+      setError('root', { type: 'manual', message: error.message });
       return;
     }
 
