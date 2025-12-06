@@ -18,7 +18,7 @@ export const userTable = appSchema.table('user_entity', {
 });
 
 export type UserModel = typeof userTable.$inferSelect;
-export type InsertUserModel = typeof userTable.$inferSelect;
+export type InsertUserModel = typeof userTable.$inferInsert;
 export type UpdateUserModel = Omit<UpdateDbRow<UserModel>, 'email'>;
 
 export const sessionTable = appSchema.table('session', {
