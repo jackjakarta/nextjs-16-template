@@ -31,7 +31,6 @@ You can now start the application:
 
 ```sh
 pnpm dev
-pnpm dev:turbo  # better dev experience with turbopack
 ```
 
 ## Code checks and format:
