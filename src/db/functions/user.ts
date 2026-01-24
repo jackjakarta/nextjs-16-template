@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 
 import { db } from '..';
-import { userTable, type InsertUserModel, type UserModel } from '../schema';
+import { userTable, type UserModel } from '../schema';
 
 export async function dbGetUserById({
   userId,
@@ -19,12 +19,6 @@ export async function dbGetUserByEmail({
   email: string;
 }): Promise<UserModel | undefined> {
   const [user] = await db.select().from(userTable).where(eq(userTable.email, email));
-
-  return user;
-}
-
-export async function dbCreateUser(data: InsertUserModel): Promise<UserModel | undefined> {
-  const [user] = await db.insert(userTable).values(data).returning();
 
   return user;
 }
