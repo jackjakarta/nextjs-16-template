@@ -60,8 +60,8 @@ importers:
         specifier: 4.1.18
         version: 4.1.18
       '@types/node':
-        specifier: 22.13.14
-        version: 22.13.14
+        specifier: 25.2.3
+        version: 25.2.3
       '@types/pg':
         specifier: 8.16.0
         version: 8.16.0
@@ -1465,10 +1465,10 @@ packages:
         integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==,
       }
 
-  '@types/node@22.13.14':
+  '@types/node@25.2.3':
     resolution:
       {
-        integrity: sha512-Zs/Ollc1SJ8nKUAgc7ivOEdIBM8JAKgrqqUYi2J997JuKO7/tpQC+WCetQ1sypiKCQWHdvdg9wBNpUPEWZae7w==,
+        integrity: sha512-m0jEgYlYz+mDJZ2+F4v8D1AyQb+QzsNqRuI7xg1VQX/KlKS0qT9r1Mo16yo5F/MtifXFgaofIFsdFMox2SxIbQ==,
       }
 
   '@types/pg@8.16.0':
@@ -4251,10 +4251,10 @@ packages:
       }
     engines: { node: '>= 0.4' }
 
-  undici-types@6.20.0:
+  undici-types@7.16.0:
     resolution:
       {
-        integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==,
+        integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==,
       }
 
   unrs-resolver@1.11.1:
@@ -5038,13 +5038,13 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
-  '@types/node@22.13.14':
+  '@types/node@25.2.3':
     dependencies:
-      undici-types: 6.20.0
+      undici-types: 7.16.0
 
   '@types/pg@8.16.0':
     dependencies:
-      '@types/node': 22.13.14
+      '@types/node': 25.2.3
       pg-protocol: 1.11.0
       pg-types: 2.2.0
 
@@ -6856,7 +6856,7 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
-  undici-types@6.20.0: {}
+  undici-types@7.16.0: {}
 
   unrs-resolver@1.11.1:
     dependencies:
