@@ -15,8 +15,8 @@ export async function getHostFromHeaders() {
 
 export async function getBaseUrlFromHeaders() {
   const host = await getHostFromHeaders();
-  const baseUrlPrefix = LOCALHOSTS.includes(host) ? 'http' : 'https';
-  const baseUrl = `${baseUrlPrefix}://${host}`;
+  const protocol = LOCALHOSTS.includes(host) ? 'http' : 'https';
+  const baseUrl = `${protocol}://${host}`;
 
   return baseUrl;
 }
