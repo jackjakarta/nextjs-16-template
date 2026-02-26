@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "build:server": "next build --experimental-build-mode compile",
     "checks": "chmod +x $(git rev-parse --show-toplevel)/scripts/checks.sh && $(git rev-parse --show-toplevel)/scripts/checks.sh",
     "db:generate": "drizzle-kit generate --config=./src/db/drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config=./src/db/drizzle.config.ts",
