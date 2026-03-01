@@ -7,14 +7,15 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const loginFormSchema = z.object({
+const registerFormSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
   email: z.email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
 });
 
-type LoginFormData = z.infer<typeof loginFormSchema>;
+type RegisterFormData = z.infer<typeof registerFormSchema>;
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const router = useRouter();
 
   const {
@@ -23,19 +24,20 @@ export default function LoginForm() {
     formState: { errors, isSubmitting, isSubmitSuccessful },
     setError,
     watch,
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginFormSchema),
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerFormSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
-  async function onSubmit(data: LoginFormData) {
-    const { email: _email, password } = data;
+  async function onSubmit(data: RegisterFormData) {
+    const { name, email: _email, password } = data;
     const email = _email.trim().toLowerCase();
 
-    const { error } = await authClient.signIn.email({
+    const { error } = await authClient.signUp.email({
+      name,
       email,
       password,
     });
@@ -48,13 +50,29 @@ export default function LoginForm() {
     router.replace('/');
   }
 
+  const nameValue = watch('name');
   const emailValue = watch('email');
   const passwordValue = watch('password');
-  const buttonDisabled = isSubmitting || isSubmitSuccessful || !emailValue || !passwordValue;
+
+  const buttonDisabled =
+    isSubmitting || isSubmitSuccessful || !nameValue || !emailValue || !passwordValue;
 
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label htmlFor="name" className="mb-1 block text-gray-700">
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            {...register('name')}
+            placeholder="John Doe"
+            className="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+          {errors.name && <div>{errors.name.message}</div>}
+        </div>
         <div>
           <label htmlFor="email" className="mb-1 block text-gray-700">
             Email address
@@ -88,13 +106,13 @@ export default function LoginForm() {
           disabled={buttonDisabled}
           className="w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700"
         >
-          {isSubmitting || isSubmitSuccessful ? 'Logging in...' : 'Login'}
+          {isSubmitting || isSubmitSuccessful ? 'Loading...' : 'Register'}
         </button>
       </form>
       <p className="mt-4 text-center text-sm text-gray-600">
-        No account ?{' '}
-        <Link href="/register" className="text-blue-600 hover:underline">
-          Register
+        Already got an account ?{' '}
+        <Link href="/login" className="text-blue-600 hover:underline">
+          Login
         </Link>
       </p>
     </>
