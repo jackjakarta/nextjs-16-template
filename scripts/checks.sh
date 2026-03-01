@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 pnpm format:check
 pnpm lint
