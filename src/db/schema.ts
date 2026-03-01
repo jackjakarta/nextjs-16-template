@@ -24,8 +24,8 @@ export type UpdateUserModel = Omit<UpdateDbRow<UserModel>, 'email'>;
 export const sessionTable = appSchema.table('session', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
-    .notNull()
-    .references(() => userTable.id),
+    .references(() => userTable.id)
+    .notNull(),
   token: text('token').notNull().unique(),
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
   ipAddress: text('ip_address'),
@@ -63,6 +63,7 @@ export const accountTable = appSchema.table('account', {
 
 export type AccountModel = typeof accountTable.$inferSelect;
 export type InsertAccountModel = typeof accountTable.$inferInsert;
+export type UpdateAccountModel = UpdateDbRow<AccountModel>;
 
 export const verificationTable = appSchema.table('verification', {
   id: uuid('id').defaultRandom().primaryKey(),
