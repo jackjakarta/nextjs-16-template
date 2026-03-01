@@ -14,6 +14,12 @@ corepack enable && corepack prepare  # set package manager
 pnpm i  # install dependencies
 ```
 
+Get env variables from the example file:
+
+```bash
+mv .env.example .env
+```
+
 You can start a local postgres instance using docker compose:
 
 ```sh
