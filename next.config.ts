@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  allowedDevOrigins: ['jakarta.ngrok.app'],
+  allowedDevOrigins: ['your.origin.dev'],
 };
 
 export default nextConfig;
