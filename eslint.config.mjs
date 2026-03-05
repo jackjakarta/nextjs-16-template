@@ -8,6 +8,7 @@ const eslintConfig = defineConfig([
   // Override default ignores of eslint-config-next.
   {
     rules: {
+      '@typescript-eslint/no-unused-vars': 'error',
       // '@next/next/no-img-element': 'off',
       // 'react/no-unescaped-entities': 'off',
     },

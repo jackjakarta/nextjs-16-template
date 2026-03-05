@@ -18,7 +18,7 @@ const pool =
     max: 12,
   });
 
-// In development mode, store the pool globally to reuse it across hot reloads.
+// in development mode, store the pool globally to reuse it across hot reloads
 if (process.env.NODE_ENV === 'development') {
   globalPool.pool = pool;
 }

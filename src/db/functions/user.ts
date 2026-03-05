@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 
 import { db } from '..';
-import { userTable, type UserModel } from '../schema';
+import { userTable, type UserModel } from '../schema/auth';
 
 export async function dbGetUserById({
   userId,

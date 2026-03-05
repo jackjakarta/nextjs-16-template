@@ -1,10 +1,11 @@
 import { boolean, pgSchema, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
-import { type UpdateDbRow } from './types';
+import { type UpdateDbRow } from '../types';
 
-export const appSchema = pgSchema('app');
+// if you use supabase you can't use "auth" as schema name
+export const authSchema = pgSchema('auth');
 
-export const userTable = appSchema.table('user_entity', {
+export const userTable = authSchema.table('user_entity', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
@@ -21,7 +22,7 @@ export type UserModel = typeof userTable.$inferSelect;
 export type InsertUserModel = typeof userTable.$inferInsert;
 export type UpdateUserModel = Omit<UpdateDbRow<UserModel>, 'email'>;
 
-export const sessionTable = appSchema.table('session', {
+export const sessionTable = authSchema.table('session', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .references(() => userTable.id)
@@ -40,11 +41,11 @@ export const sessionTable = appSchema.table('session', {
 export type SessionModel = typeof sessionTable.$inferSelect;
 export type InsertSessionModel = typeof sessionTable.$inferInsert;
 
-export const accountTable = appSchema.table('account', {
+export const accountTable = authSchema.table('account', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
-    .notNull()
-    .references(() => userTable.id),
+    .references(() => userTable.id)
+    .notNull(),
   accountId: text('account_id').notNull(),
   providerId: text('provider_id').notNull(),
   accessToken: text('access_token'),
@@ -65,7 +66,7 @@ export type AccountModel = typeof accountTable.$inferSelect;
 export type InsertAccountModel = typeof accountTable.$inferInsert;
 export type UpdateAccountModel = UpdateDbRow<AccountModel>;
 
-export const verificationTable = appSchema.table('verification', {
+export const verificationTable = authSchema.table('verification', {
   id: uuid('id').defaultRandom().primaryKey(),
   identifier: text('identifier').notNull(),
   value: text('value').notNull(),

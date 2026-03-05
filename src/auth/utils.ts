@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { dbGetUserById } from '@/db/functions/user';
-import { type UserModel } from '@/db/schema';
+import { type UserModel } from '@/db/schema/auth';
 import { headers } from 'next/headers';
 import { redirect, RedirectType } from 'next/navigation';
 
