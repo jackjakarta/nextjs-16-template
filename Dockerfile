@@ -15,7 +15,7 @@ FROM base AS builder
 RUN npm install -g pnpm@9.15.3
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm build:server
+RUN pnpm build
 
 FROM base AS runner
 

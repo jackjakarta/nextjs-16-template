@@ -11,13 +11,13 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     sendResetPassword: async ({ user, url }, request) => {
-      console.info({ info: 'Sending reset password email' });
+      console.info({ info: 'Sending reset password email', url });
     },
   },
   emailVerification: {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     sendVerificationEmail: async ({ user, url }, request) => {
-      console.info({ info: 'Sending verification email' });
+      console.info({ info: 'Sending verification email', url });
     },
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
@@ -37,6 +37,7 @@ export const auth = betterAuth({
   user: {
     modelName: 'user_entity',
   },
+  trustedOrigins: ['http://localhost:3000', 'http://127.0.0.1:3000'],
   advanced: {
     database: {
       generateId: false,

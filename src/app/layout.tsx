@@ -1,19 +1,22 @@
 import { cn } from '@/utils/tailwind';
 import { type Metadata } from 'next';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
-import { Geist_Mono, Lato } from 'next/font/google';
+import { Manrope, Space_Mono } from 'next/font/google';
 
 import './globals.css';
 
-const latoSans = Lato({
-  variable: '--font-lato-sans',
+const manropeSans = Manrope({
+  variable: '--font-manrope-sans',
   subsets: ['latin'],
-  weight: ['100', '300', '400', '700', '900'],
+  weight: ['200', '300', '400', '500', '600', '700', '800'],
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const spaceMono = Space_Mono({
+  variable: '--font-space-mono',
   subsets: ['latin'],
+  weight: ['400', '700'],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -24,21 +27,23 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={cn(latoSans.variable, geistMono.variable, 'antialiased')}>
+    <html lang={locale} suppressHydrationWarning>
+      <body className={cn(manropeSans.variable, spaceMono.variable, 'antialiased')}>
         <ThemeProvider
           defaultTheme="system"
           attribute="class"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>

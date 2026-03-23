@@ -1,0 +1,45 @@
+{
+  "auth": {
+    "login": {
+      "heading": "Welcome back",
+      "sub-heading": "Login to your easyCron account",
+      "form": {
+        "email": {
+          "label": "Email address",
+          "placeholder": "m@example.com",
+          "error": "Please enter a valid email address"
+        },
+        "password": {
+          "label": "Password",
+          "placeholder": "********",
+          "error": "Please enter your password"
+        },
+        "buttons": {
+          "submit": "Login",
+          "forgot-password": "Forgot password?",
+          "no-account": "No account?",
+          "register": "Register",
+          "login-with": "Continue with"
+        }
+      }
+    },
+    "logout": "Logout"
+  },
+  "common": {
+    "or": "or",
+    "and": "and",
+    "back": "Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "continue": "Continue",
+    "with": "with",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous",
+    "view-all": "View all",
+    "loading": "Loading..."
+  }
+}
