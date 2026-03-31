@@ -1,0 +1,19 @@
+{
+  "enabledPlugins": {
+    "context7@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(find:*)",
+
+      "Bash(pnpm format:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm types:*)",
+      "Bash(pnpm test:*)"
+    ]
+  },
+  "deny": ["Bash(pnpm build:*)", "Bash(pnpm db:migrate:*)"]
+}

@@ -2,24 +2,33 @@ import { cookies } from 'next/headers';
 
 import { appLocaleSchema, type AppLocale } from './types';
 
-export async function setCookie(
-  name: string,
-  value: string,
-  options?: { maxAge?: number; path?: string },
-) {
-  const cookieStore = await cookies();
+export type SetCookieParams = {
+  name: string;
+  value: string;
+  path?: string;
+  maxAge?: number;
+  sameSite?: 'strict' | 'lax';
+  httpOnly?: boolean;
+};
 
-  const cookieOptions = {
-    ...options,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict' as const,
-  };
+export async function setCookie({
+  name,
+  value,
+  path,
+  maxAge,
+  sameSite = 'lax',
+  httpOnly = true,
+}: SetCookieParams) {
+  const cookieStore = await cookies();
 
   cookieStore.set({
     name,
     value,
-    ...cookieOptions,
+    httpOnly,
+    sameSite,
+    path,
+    maxAge,
+    secure: process.env.NODE_ENV === 'production',
   });
 }
 

@@ -3,6 +3,7 @@
 ## Requirements
 
 - [fnm](https://github.com/Schniz/fnm)
+- [docker (optional)](https://docker.com)
 
 ## Usage
 
