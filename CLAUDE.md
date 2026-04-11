@@ -83,3 +83,7 @@ docker compose up -d postgres        # Start PostgreSQL
 pnpm db:generate && pnpm db:migrate
 pnpm dev
 ```
+
+## Libraries
+
+When working with libraries always use the context7 mcp tools, never guess APIs from memory.

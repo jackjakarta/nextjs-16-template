@@ -10,13 +10,13 @@ export const auth = betterAuth({
     autoSignIn: false,
     requireEmailVerification: true,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    sendResetPassword: async ({ user, url }, request) => {
+    sendResetPassword: async ({ user, token, url }, request) => {
       console.info({ info: 'Sending reset password email', url });
     },
   },
   emailVerification: {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    sendVerificationEmail: async ({ user, url }, request) => {
+    sendVerificationEmail: async ({ user, token, url }, request) => {
       console.info({ info: 'Sending verification email', url });
     },
     sendOnSignUp: true,
