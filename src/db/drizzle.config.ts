@@ -1,7 +1,7 @@
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-  schema: ['./src/db/schema/auth.ts', './src/db/schema/app.ts'],
+  schema: ['./src/db/schema/auth.ts', './src/db/schema/app.ts', './src/db/schema/jobs.ts'],
   out: './src/db/migrations',
   dbCredentials: {
     url: process.env.DATABASE_URL!,
