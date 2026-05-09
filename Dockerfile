@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:24.14.0-slim AS base
+FROM node:24.14.1-slim AS base
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ FROM base AS deps
 
 RUN npm install -g pnpm@9.15.3
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm i
+RUN pnpm i --frozen-lockfile
 
 FROM base AS builder
 
@@ -26,9 +26,11 @@ ENV PORT=3000
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
 
 EXPOSE 3000
 
