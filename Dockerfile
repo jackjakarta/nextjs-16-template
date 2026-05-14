@@ -6,13 +6,13 @@ WORKDIR /app
 
 FROM base AS deps
 
-RUN npm install -g pnpm@9.15.3
+RUN npm install -g pnpm@11.1.2
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm i --frozen-lockfile
 
 FROM base AS builder
 
-RUN npm install -g pnpm@9.15.3
+RUN npm install -g pnpm@11.1.2
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN pnpm build
