@@ -4,7 +4,7 @@ import { type UserModel } from '@/db/schema/auth';
 import { headers } from 'next/headers';
 import { redirect, RedirectType } from 'next/navigation';
 
-export async function getMaybeSession() {
+export async function getSessionOrNull() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -13,7 +13,7 @@ export async function getMaybeSession() {
 }
 
 export async function getValidSession() {
-  const session = await getMaybeSession();
+  const session = await getSessionOrNull();
 
   if (session === null) {
     redirect('/login', RedirectType.replace);

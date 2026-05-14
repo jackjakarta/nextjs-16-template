@@ -1,10 +1,10 @@
-import { getMaybeSession } from '@/auth/utils';
+import { getSessionOrNull } from '@/auth/utils';
 import { redirect } from 'next/navigation';
 
 import RegisterForm from './register-form';
 
 export default async function LoginPage() {
-  const session = await getMaybeSession();
+  const session = await getSessionOrNull();
 
   if (session !== null) {
     redirect('/');
