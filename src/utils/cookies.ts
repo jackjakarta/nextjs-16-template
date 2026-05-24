@@ -44,12 +44,12 @@ export async function getCookieValue(name: string): Promise<string | undefined> 
   return cookieValue;
 }
 
-export async function getLocaleFromCookies(): Promise<AppLocale | undefined> {
+export async function getLocaleFromCookies(): Promise<AppLocale> {
   const locale = await getCookieValue('app_locale');
   const parsedLocale = appLocaleSchema.safeParse(locale);
 
   if (!parsedLocale.success) {
-    return undefined;
+    return 'en';
   }
 
   return parsedLocale.data;
