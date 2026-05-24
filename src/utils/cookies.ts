@@ -45,7 +45,7 @@ export async function getCookieValue(name: string): Promise<string | undefined> 
 }
 
 export async function getLocaleFromCookies(): Promise<AppLocale | undefined> {
-  const locale = await getCookieValue('site_language');
+  const locale = await getCookieValue('app_locale');
   const parsedLocale = appLocaleSchema.safeParse(locale);
 
   if (!parsedLocale.success) {
