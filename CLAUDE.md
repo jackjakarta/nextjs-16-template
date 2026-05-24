@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Next.js 16 template with React 19, TypeScript 5.9, PostgreSQL/Drizzle ORM, Better Auth, Tailwind CSS v4/shadcn/ui, and next-intl for i18n.
+Next.js 16 template with React 19, TypeScript 5.9, PostgreSQL/Drizzle ORM, Better Auth, a Hono API layer, TanStack React Query, Tailwind CSS v4/shadcn/ui, and next-intl for i18n.
 
 ## Commands
 
@@ -39,7 +39,7 @@ pnpm db:studio            # Open Drizzle Studio UI
 - `src/app/(app)/` — Protected application routes
 - `src/app/(auth)/` — Authentication routes (login, register, logout)
 - `src/app/api/auth/[...all]/` — Better Auth catch-all handler
-- `src/app/api/health/` — Health check endpoint
+- `src/app/api/[[...route]]/` — Hono catch-all handler (see API layer below); `/api/health` lives here
 
 **Key modules:**
 
@@ -49,7 +49,8 @@ pnpm db:studio            # Open Drizzle Studio UI
 - `src/actions/` — Server actions (e.g. `setLocaleAction` persists locale to a cookie)
 - `src/env/` — Type-safe env validation via t3-oss/env-nextjs with Zod
 - `src/components/ui/` — shadcn/ui components
-- `src/i18n/` — next-intl config; locale resolved from the `app_locale` cookie, translations in `src/messages/<locale>.json`
+- `src/i18n/` — next-intl config; locale resolved from the `app_locale` cookie, translations in `messages/<locale>.json` (repo root, not under `src/`)
+- `src/hooks/query/` — React Query hooks; co-locate a `*_QUERY_KEY` const and `queryFn` per hook (see `use-example-query.ts`)
 - `src/utils/` — Shared utilities (`cn()` for Tailwind class merging, cookie helpers, types)
 
 **Auth helpers** (`src/auth/utils.ts`):
@@ -58,18 +59,29 @@ pnpm db:studio            # Open Drizzle Studio UI
 - `getValidSession()` — session or redirect
 - `getUser()` — full user from session
 
+**API layer (Hono):** REST endpoints run through a single Hono app, not per-folder Next.js route handlers.
+
+- `src/app/api/hono-app.ts` — `app` mounted at `basePath('/api')`; mount route groups with `.route('/', group)` and export the chained `routes` value's type as `AppType` (required for the typed client).
+- `src/app/api/[[...route]]/route.ts` — adapts `app` to Next.js via `hono/vercel`'s `handle`, re-exporting all HTTP verbs.
+- `src/app/api/routes/<name>/` — one route group per resource: `index.ts` defines the Hono routes (`new Hono().basePath('/<name>').use(authMiddleware)...`), `handler.ts` holds the handlers. Validate request bodies with Zod `safeParse` inside handlers.
+- `src/app/api/middleware/auth.ts` — `authMiddleware` resolves the Better Auth session and sets `userId`/`userName`/`userEmail` on the context (typed via `AuthEnv`); read them with `ctx.get('userId')`.
+- `src/app/api/hono-client.ts` — `honoClient` is a typed `hc<AppType>` client; call endpoints from the frontend (e.g. `honoClient.api.example.$get()`) for end-to-end type safety.
+
+**Data fetching (React Query):** Client components fetch via React Query hooks in `src/hooks/query/` that wrap `honoClient` calls. `CustomUseQueryOptions<T>` (`src/hooks/query/types.ts`) is the standard options type (omits `queryKey`/`queryFn`). Note: no `QueryClientProvider` is wired into the root layout yet — add one before these hooks will run.
+
 **Database:** PostgreSQL with Drizzle ORM using snake_case DB columns. Three Postgres schemas: `auth`, `app`, and `jobs` (each via `pgSchema(...)`). Connection configured in `src/db/index.ts`, Drizzle config in `src/db/drizzle.config.ts`.
 
 **Background jobs** (`src/jobs/`): A self-contained queue backed by the `jobs.job` table, driven by Postgres `LISTEN/NOTIFY` (`job_available` channel) with a 60s polling fallback.
 
 - Define a job with `defineJob({ type, handler, maxAttempts?, timeoutMs?, onComplete?, onDead? })`. Add the `type` to `jobTypeSchema` in `registry.ts`, then register the handler via a side-effect import in `src/jobs/definitions/index.ts`.
 - Enqueue with `enqueueJob(type, payload, options?)` — inserts a row and fires `NOTIFY`.
-- `startWorker()` (`src/jobs/index.ts`) boots a `JobWorker` in a long-running process: claims one job at a time with `FOR UPDATE SKIP LOCKED`, enforces `timeoutMs`, retries with exponential backoff, marks exhausted jobs `dead`, and recovers stale `running` jobs on startup. No worker process is wired into `package.json` — invoke `startWorker()` from your own entrypoint.
+- `startWorker()` (`src/jobs/index.ts`) boots a `JobWorker` in a long-running process: claims one job at a time with `FOR UPDATE SKIP LOCKED`, enforces `timeoutMs`, retries with exponential backoff, marks exhausted jobs `dead`, and recovers stale `running` jobs on startup. The worker is auto-started by `src/instrumentation.ts` (calls `startWorker()` when `NEXT_RUNTIME === 'nodejs'`), so it boots with the Next.js server process.
 
 ## Conventions
 
 - Path alias: `@/*` → `src/*`
 - TypeScript strict mode with `noUncheckedIndexedAccess`
+- `next.config.ts` sets `typescript.ignoreBuildErrors: true`, so `pnpm build` does **not** fail on type errors — `pnpm types` is the real type gate. Build also uses `output: 'standalone'` (for the Docker image).
 - Forms: React Hook Form + Zod + @hookform/resolvers
 - Styling: Tailwind CSS v4 with CSS variables for theming; use `cn()` from `@/utils/tailwind`
 - Env vars: access via `env` object from `@/env`, never `process.env` directly in app code
