@@ -21,7 +21,7 @@
 
       "mcp__plugin_context7_context7__*"
     ],
-    "ask": ["Bash(psql *)", "Bash(pnpm db:migrate *)"],
-    "deny": ["Bash(pnpm build *)", "Bash(pnpm op:inject *)"]
+    "ask": ["Bash(psql *)", "Bash(pnpm pipeline *)"],
+    "deny": ["Bash(pnpm build *)", "Bash(pnpm db:migrate *)", "Bash(pnpm op:inject *)"]
   }
 }
