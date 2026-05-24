@@ -1,13 +1,10 @@
-'use client';
-
 import { honoClient } from '@/app/api/hono-client';
-import { type MockDbType } from '@/app/api/routes/example/endpoint/handler';
+import { type MockDbType } from '@/app/api/routes/example/handler';
 import { useQuery } from '@tanstack/react-query';
 
 import { type CustomUseQueryOptions } from './types';
 
 export const EXAMPLES_QUERY_KEY = ['examples'] as const;
-
 export type UseExamplesQueryOptions = CustomUseQueryOptions<MockDbType[]>;
 
 export function useExamplesQuery(options?: UseExamplesQueryOptions) {
