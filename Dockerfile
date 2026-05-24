@@ -1,13 +1,13 @@
 # syntax=docker/dockerfile:1
 
-FROM node:24.14.1-slim AS base
+FROM node:24.16.0-slim AS base
 
 WORKDIR /app
 
 FROM base AS deps
 
 RUN npm install -g pnpm@11.1.2
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm i --frozen-lockfile
 
 FROM base AS builder
