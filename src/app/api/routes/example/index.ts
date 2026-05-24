@@ -15,4 +15,11 @@ export const exampleRouteGroup = new Hono()
   })
   .post('/', async (ctx) => {
     return examplePostHandler(ctx);
+  })
+  .put('/', async () => {
+    // put requests for updates
+    return;
+  })
+  .delete('/', async () => {
+    return;
   });
