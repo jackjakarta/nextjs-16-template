@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const jobTypeSchema = z.enum(['test-job']);
-
 export type JobType = z.infer<typeof jobTypeSchema>;
 
 type JobHandler<TPayload> = (payload: TPayload) => Promise<void>;
