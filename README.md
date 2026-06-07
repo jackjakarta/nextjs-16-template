@@ -17,7 +17,7 @@ pnpm i  # install dependencies
 
 Get env variables from the example file:
 
-```bash
+```sh
 mv .env.example .env
 ```
 
