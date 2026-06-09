@@ -41,15 +41,17 @@ pnpm db:studio            # Open Drizzle Studio UI
 - `src/app/api/auth/[...all]/` — Better Auth catch-all handler
 - `src/app/api/[[...route]]/` — Hono catch-all handler (see API layer below); `/api/health` lives here
 
+**Request interception:** `src/proxy.ts` is Next.js 16's renamed middleware (`middleware.ts` → `proxy.ts`); export a `proxy(req: NextRequest)` function instead of `middleware()`. The current one logs the `ref` query param and calls `NextResponse.next()`.
+
 **Key modules:**
 
 - `src/auth/` — Better Auth config (server: `index.ts`, client: `client.ts`, helpers: `utils.ts`)
 - `src/db/` — Drizzle ORM setup, schemas (`schema/auth.ts`, `schema/app.ts`, `schema/jobs.ts`), query functions (`functions/`)
 - `src/jobs/` — Postgres-backed background job queue (see below)
-- `src/actions/` — Server actions (e.g. `setLocaleAction` persists locale to a cookie)
+- `src/actions/` — Server actions (`cookies.ts`: `setLocaleAction` persists locale, `setUserIdCookie` writes the analytics user id)
 - `src/env/` — Type-safe env validation via t3-oss/env-nextjs with Zod
 - `src/components/ui/` — shadcn/ui components
-- `src/i18n/` — next-intl config; locale resolved from the `app_locale` cookie, translations in `messages/<locale>.json` (repo root, not under `src/`)
+- `src/i18n/` — next-intl config; locale resolved from the `user_pref.app_locale` cookie, translations in `messages/<locale>.json` (repo root, not under `src/`)
 - `src/hooks/query/` — React Query hooks; co-locate a `*_QUERY_KEY` const and `queryFn` per hook (see `use-example-query.ts`)
 - `src/utils/` — Shared utilities (`cn()` for Tailwind class merging, cookie helpers, types)
 

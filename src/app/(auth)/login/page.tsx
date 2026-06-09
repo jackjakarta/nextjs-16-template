@@ -13,7 +13,7 @@ export default async function LoginPage() {
 
   return (
     <div className="flex items-center justify-center p-4">
-      <div className="flex flex-col items-center justify-center gap-4">
+      <div className="flex w-full max-w-4xl flex-col items-center justify-center gap-4">
         <h1 className="text-2xl font-bold">{t('heading')}</h1>
         <p className="text-gray-500">{t('sub-heading')}</p>
         <LoginForm />
