@@ -1,10 +1,11 @@
 import { getSessionOrNull } from '@/auth/utils';
+import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 
 import RegisterForm from './register-form';
 
 export default async function LoginPage() {
-  const session = await getSessionOrNull();
+  const [session, t] = await Promise.all([getSessionOrNull(), getTranslations('auth.register')]);
 
   if (session !== null) {
     redirect('/');
@@ -12,9 +13,9 @@ export default async function LoginPage() {
 
   return (
     <div className="flex items-center justify-center p-4">
-      <div className="flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">Register</h1>
-        <p className="text-gray-500">Register a new account</p>
+      <div className="flex w-full max-w-4xl flex-col items-center justify-center gap-4">
+        <h1 className="text-2xl font-bold">{t('heading')}</h1>
+        <p className="text-gray-500">{t('sub-heading')}</p>
         <RegisterForm />
       </div>
     </div>

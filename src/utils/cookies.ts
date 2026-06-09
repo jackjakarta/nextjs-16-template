@@ -9,6 +9,7 @@ export type SetCookieParams = {
   maxAge?: number;
   sameSite?: 'strict' | 'lax';
   httpOnly?: boolean;
+  secure?: boolean;
 };
 
 export async function setCookie({
@@ -18,17 +19,18 @@ export async function setCookie({
   maxAge,
   sameSite = 'lax',
   httpOnly = true,
+  secure = process.env.NODE_ENV === 'production',
 }: SetCookieParams) {
   const cookieStore = await cookies();
 
   cookieStore.set({
     name,
     value,
-    httpOnly,
-    sameSite,
     path,
     maxAge,
-    secure: process.env.NODE_ENV === 'production',
+    sameSite,
+    httpOnly,
+    secure,
   });
 }
 
@@ -45,7 +47,7 @@ export async function getCookieValue(name: string): Promise<string | undefined> 
 }
 
 export async function getLocaleFromCookies(): Promise<AppLocale> {
-  const locale = await getCookieValue('app_locale');
+  const locale = await getCookieValue('user_pref.app_locale');
   const parsedLocale = appLocaleSchema.safeParse(locale);
 
   if (!parsedLocale.success) {

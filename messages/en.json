@@ -2,7 +2,7 @@
   "auth": {
     "login": {
       "heading": "Welcome back",
-      "sub-heading": "Login to your easyCron account",
+      "sub-heading": "Login to your account",
       "form": {
         "email": {
           "label": "Email address",
@@ -20,6 +20,38 @@
           "no-account": "No account?",
           "register": "Register",
           "login-with": "Continue with"
+        }
+      }
+    },
+    "register": {
+      "heading": "Register",
+      "sub-heading": "Register a new account",
+      "form": {
+        "name": {
+          "label": "Name",
+          "placeholder": "John Doe",
+          "error": "Please enter your name"
+        },
+        "email": {
+          "label": "Email address",
+          "placeholder": "m@example.com",
+          "error": "Please enter a valid email address"
+        },
+        "password": {
+          "label": "Password",
+          "placeholder": "********",
+          "error": "Password must be at least 6 characters long"
+        },
+        "confirmPassword": {
+          "label": "Confirm Password",
+          "placeholder": "********",
+          "error": "Passwords don't match"
+        },
+        "buttons": {
+          "submit": "Register",
+          "loading": "Loading...",
+          "have-account": "Already got an account?",
+          "login": "Login"
         }
       }
     },

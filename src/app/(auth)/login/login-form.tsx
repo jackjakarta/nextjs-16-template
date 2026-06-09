@@ -1,6 +1,8 @@
 'use client';
 
+import { setUserIdCookie } from '@/actions/cookies';
 import { authClient } from '@/auth/client';
+import { cn } from '@/utils/tailwind';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -47,6 +49,8 @@ export default function LoginForm() {
       return;
     }
 
+    await setUserIdCookie();
+
     router.replace('/');
   }
 
@@ -54,11 +58,16 @@ export default function LoginForm() {
   const passwordValue = watch('password');
   const buttonDisabled = isSubmitting || isSubmitSuccessful || !emailValue || !passwordValue;
 
+  const labelClassName = cn('mb-1 block text-gray-700');
+  const fieldClassName = cn(
+    'w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none',
+  );
+
   return (
-    <>
+    <div className="w-full max-w-lg">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label htmlFor="email" className="mb-1 block text-gray-700">
+          <label htmlFor="email" className={labelClassName}>
             {t('form.email.label')}
           </label>
           <input
@@ -66,12 +75,12 @@ export default function LoginForm() {
             type="text"
             {...register('email')}
             placeholder={t('form.email.placeholder')}
-            className="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className={fieldClassName}
           />
           {errors.email && <div>{t('form.email.error')}</div>}
         </div>
         <div>
-          <label htmlFor="password" className="mb-1 block text-gray-700">
+          <label htmlFor="password" className={labelClassName}>
             {t('form.password.label')}
           </label>
           <input
@@ -79,7 +88,7 @@ export default function LoginForm() {
             type="password"
             {...register('password')}
             placeholder={t('form.password.placeholder')}
-            className="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className={fieldClassName}
           />
           {errors.password && <div>{t('form.password.error')}</div>}
           {errors.root && <div>{errors.root.message}</div>}
@@ -99,6 +108,6 @@ export default function LoginForm() {
           {t('form.buttons.register')}
         </Link>
       </p>
-    </>
+    </div>
   );
 }
