@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { getProxyRewriteUrl, logRefParams } from './utils/proxy';
+
 export function proxy(req: NextRequest) {
-  const { searchParams } = req.nextUrl;
-  logRefParams(searchParams);
+  const { headers, nextUrl } = req;
+  const rewriteUrl = getProxyRewriteUrl({ headers, nextUrl });
+
+  logRefParams(nextUrl.searchParams);
+
+  if (rewriteUrl !== null) {
+    return NextResponse.rewrite(rewriteUrl);
+  }
 
   return NextResponse.next();
 }
 
-function logRefParams(searchParams: URLSearchParams) {
-  const ref = searchParams.get('ref');
-
-  if (ref !== null) {
-    console.info('logged ref', ref);
-  }
-}
+export const config = {
+  matcher: ['/((?!api|_next|favicon.ico).*)'],
+};

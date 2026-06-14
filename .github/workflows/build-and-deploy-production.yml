@@ -1,0 +1,116 @@
+name: Build and Deploy Production
+
+on:
+  # push:
+  #   tags:
+  #     - '*.*.*'
+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to deploy'
+        required: true
+        default: ''
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+
+    steps:
+      - name: Set up Docker image tags
+        id: vars
+        run: |
+          echo "TAG_VERSION=${{ github.event.inputs.tag || github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Load build secrets
+        uses: 1password/load-secrets-action@v4
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          DOCKER_USERNAME: 'op://your-app/github-secrets/DOCKER_USERNAME'
+          DOCKER_PASSWORD: 'op://your-app/github-secrets/DOCKER_PASSWORD'
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+
+      - name: Build and push docker image
+        run: |
+          docker build -t ghcr.io/${{ env.DOCKER_USERNAME }}/yourimage:${{ env.TAG_VERSION }} -t ghcr.io/${{ env.DOCKER_USERNAME }}/yourimage:latest . && \
+          docker push ghcr.io/${{ env.DOCKER_USERNAME }}/yourimage:${{ env.TAG_VERSION }} && \
+          docker push ghcr.io/${{ env.DOCKER_USERNAME }}/yourimage:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    needs: build
+
+    steps:
+      - name: Set up Docker image tags
+        id: vars
+        run: |
+          echo "TAG_VERSION=${{ github.event.inputs.tag || github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Load deploy secrets
+        uses: 1password/load-secrets-action@v4
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          REMOTE_HOST: 'op://your-app/github-secrets/REMOTE_HOST'
+          REMOTE_USER: 'op://your-app/github-secrets/REMOTE_USER'
+          DOCKER_USERNAME: 'op://your-app/github-secrets/DOCKER_USERNAME'
+          DOCKER_PASSWORD: 'op://your-app/github-secrets/DOCKER_PASSWORD'
+          SSH_PRIVATE_KEY: 'op://your-app/github-secrets/SSH_PRIVATE_KEY'
+
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v4
+
+      - name: Inject app secrets into .env
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+        run: ENVIRONMENT=production op inject -f -i .env.op -o .env
+
+      - name: Add tag version to .env file
+        run: echo "TAG_VERSION=${{ env.TAG_VERSION }}" >> .env
+
+      - name: Copy .env and compose file to remote server
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ env.REMOTE_HOST }}
+          username: ${{ env.REMOTE_USER }}
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          source: '.env,docker-compose.production.yml'
+          target: '~/yourappdir'
+
+      - name: Deploy to remote server
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ env.REMOTE_HOST }}
+          username: ${{ env.REMOTE_USER }}
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/yourappdir
+
+            echo "${{ env.DOCKER_PASSWORD }}" | docker login ghcr.io -u "${{ env.DOCKER_USERNAME }}" --password-stdin
+            docker pull ghcr.io/${{ env.DOCKER_USERNAME }}/yourimage:${{ env.TAG_VERSION }}
+
+            export $(grep -v '^#' .env | xargs) && \
+            envsubst < docker-compose.production.yml | docker stack deploy --with-registry-auth -c - yourstack && \
+            docker system prune -f

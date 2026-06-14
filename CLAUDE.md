@@ -90,6 +90,7 @@ pnpm db:studio            # Open Drizzle Studio UI
 - Prettier config: `@jackjakarta/prettier-config` with Next.js preset
 - DB Delete Queries: No cascades on db tables. We do a `db.transaction()` where we execute the necessary queries.
 - DB Enums: Only type enums at code level with a `text().$type<Type>()` column instead of a `pgEnum`.
+- Text that is displayed somewhere is always localized, never hardcoded. See `messages/en.json` and `(auth)` route group.
 
 ## Environment Variables
 

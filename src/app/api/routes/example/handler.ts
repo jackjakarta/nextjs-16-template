@@ -11,7 +11,7 @@ export type MockDbType = {
 
 export async function examplesGetHandler(ctx: Context<AuthEnv>) {
   try {
-    const userId = ctx.get('userId');
+    const userId = ctx.var.userId;
 
     const mockDataFromDb: MockDbType[] = [
       {
@@ -33,7 +33,7 @@ const endpointRequestBodySchema = z.object({
 
 export async function examplePostHandler(ctx: Context<AuthEnv>) {
   try {
-    const userId = ctx.get('userId');
+    const userId = ctx.var.userId;
 
     const json = await ctx.req.json();
     const parsed = endpointRequestBodySchema.safeParse(json);

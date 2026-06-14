@@ -1,6 +1,5 @@
 'use client';
 
-import { setUserIdCookie } from '@/actions/cookies';
 import { authClient } from '@/auth/client';
 import { cn } from '@/utils/tailwind';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -48,8 +47,6 @@ export default function LoginForm() {
       setError('root', { type: 'manual', message: error.message });
       return;
     }
-
-    await setUserIdCookie();
 
     router.replace('/');
   }
