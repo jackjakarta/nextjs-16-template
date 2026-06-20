@@ -2,9 +2,9 @@ import { db } from '@/db';
 import { jobTable } from '@/db/schema/jobs';
 import { sql } from 'drizzle-orm';
 
-import './definitions';
-
 import { getJobDefinition, type JobType } from './registry';
+
+import './definitions';
 
 type EnqueueOptions = {
   maxAttempts?: number;
@@ -18,12 +18,14 @@ export async function enqueueJob<TPayload extends Record<string, unknown>>(
 ) {
   const definition = getJobDefinition(type);
 
-  await db.insert(jobTable).values({
-    type,
-    payload,
-    maxAttempts: options?.maxAttempts ?? definition?.maxAttempts ?? 3,
-    runAt: options?.runAt ?? new Date(),
-  });
+  await db.transaction(async (tx) => {
+    await tx.insert(jobTable).values({
+      type,
+      payload,
+      maxAttempts: options?.maxAttempts ?? definition?.maxAttempts ?? 3,
+      runAt: options?.runAt ?? new Date(),
+    });
 
-  await db.execute(sql`NOTIFY job_available`);
+    await tx.execute(sql`NOTIFY job_available`);
+  });
 }
