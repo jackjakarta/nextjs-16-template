@@ -1,3 +1,5 @@
 #!/bin/bash
 
-pnpm format:check && pnpm lint && pnpm types && pnpm audit --audit-level=critical && pnpm build
+pnpm checks && \
+pnpm audit --audit-level=critical && \
+pnpm build
