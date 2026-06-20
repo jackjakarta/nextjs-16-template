@@ -1,3 +1,6 @@
+# replace "yourimage" with replace all your docker image name
+# replace "yourstack" with replace all with your stack name
+
 name: Build and Deploy Production
 
 on:
