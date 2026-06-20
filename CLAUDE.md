@@ -41,7 +41,7 @@ pnpm db:studio            # Open Drizzle Studio UI
 - `src/app/api/auth/[...all]/` — Better Auth catch-all handler
 - `src/app/api/[[...route]]/` — Hono catch-all handler (see API layer below); `/api/health` lives here
 
-**Request interception:** `src/proxy.ts` is Next.js 16's renamed middleware (`middleware.ts` → `proxy.ts`); export a `proxy(req: NextRequest)` function instead of `middleware()`. The current one logs the `ref` query param and calls `NextResponse.next()`.
+**Request interception:** `src/proxy.ts` is Next.js 16's renamed middleware (`middleware.ts` → `proxy.ts`); export a `proxy(req: NextRequest)` function instead of `middleware()`. The current one logs the `ref` query param and rewrites the `docs.` subdomain to the `/docs` route (helpers live in `src/utils/proxy.ts`); otherwise `NextResponse.next()`. Its `config.matcher` excludes `api`, `_next`, and `favicon.ico`.
 
 **Key modules:**
 
@@ -53,7 +53,8 @@ pnpm db:studio            # Open Drizzle Studio UI
 - `src/components/ui/` — shadcn/ui components
 - `src/i18n/` — next-intl config; locale resolved from the `user_pref.app_locale` cookie, translations in `messages/<locale>.json` (repo root, not under `src/`)
 - `src/hooks/query/` — React Query hooks; co-locate a `*_QUERY_KEY` const and `queryFn` per hook (see `use-example-query.ts`)
-- `src/utils/` — Shared utilities (`cn()` for Tailwind class merging, cookie helpers, types)
+- `src/providers/` — Client context providers; `client-provider.tsx` wraps children in a `QueryClientProvider`
+- `src/utils/` — Shared utilities (`cn()` for Tailwind class merging, cookie/host/context helpers, `proxy.ts`, types)
 
 **Auth helpers** (`src/auth/utils.ts`):
 
@@ -69,7 +70,7 @@ pnpm db:studio            # Open Drizzle Studio UI
 - `src/app/api/middleware/auth.ts` — `authMiddleware` resolves the Better Auth session and sets `userId`/`userName`/`userEmail` on the context (typed via `AuthEnv`); read them with `ctx.get('userId')`.
 - `src/app/api/hono-client.ts` — `honoClient` is a typed `hc<AppType>` client; call endpoints from the frontend (e.g. `honoClient.api.example.$get()`) for end-to-end type safety.
 
-**Data fetching (React Query):** Client components fetch via React Query hooks in `src/hooks/query/` that wrap `honoClient` calls. `CustomUseQueryOptions<T>` (`src/hooks/query/types.ts`) is the standard options type (omits `queryKey`/`queryFn`). Note: no `QueryClientProvider` is wired into the root layout yet — add one before these hooks will run.
+**Data fetching (React Query):** Client components fetch via React Query hooks in `src/hooks/query/` that wrap `honoClient` calls. `CustomUseQueryOptions<T>` (`src/hooks/query/types.ts`) is the standard options type (omits `queryKey`/`queryFn`). Note: a `QueryClientProvider` exists as `src/providers/client-provider.tsx` but is **not** yet mounted in the root layout (`src/app/layout.tsx`, which currently wires only `ThemeProvider` + `NextIntlClientProvider`) — mount `ClientProvider` there before these hooks will run.
 
 **Database:** PostgreSQL with Drizzle ORM using snake_case DB columns. Three Postgres schemas: `auth`, `app`, and `jobs` (each via `pgSchema(...)`). Connection configured in `src/db/index.ts`, Drizzle config in `src/db/drizzle.config.ts`.
 
