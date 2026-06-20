@@ -42,6 +42,14 @@ jobs:
           DOCKER_USERNAME: 'op://your-app/github-secrets/DOCKER_USERNAME'
           DOCKER_PASSWORD: 'op://your-app/github-secrets/DOCKER_PASSWORD'
 
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v4
+
+      - name: Inject app secrets into .env
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+        run: ENVIRONMENT=production op inject -f -i .env.op -o .env
+
       - name: Log in to ghcr.io
         uses: docker/login-action@v4
         with:
@@ -82,16 +90,8 @@ jobs:
           DOCKER_PASSWORD: 'op://your-app/github-secrets/DOCKER_PASSWORD'
           SSH_PRIVATE_KEY: 'op://your-app/github-secrets/SSH_PRIVATE_KEY'
 
-      - name: Install 1Password CLI
-        uses: 1password/install-cli-action@v4
-
-      - name: Inject app secrets into .env
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-        run: ENVIRONMENT=production op inject -f -i .env.op -o .env
-
       - name: Add tag version to .env file
-        run: echo "TAG_VERSION=${{ env.TAG_VERSION }}" >> .env
+        run: echo "TAG_VERSION=${{ env.TAG_VERSION }}" > .env
 
       - name: Copy .env and compose file to remote server
         uses: appleboy/scp-action@v1.0.0
