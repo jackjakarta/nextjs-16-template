@@ -1,5 +1,7 @@
 # replace "yourimage" with replace all your docker image name
 # replace "yourstack" with replace all with your stack name
+# replace "your-vault" with replace all with your 1password vault name
+# replace "yourappdir" with replace all with your app dir on the remote server
 
 name: Build and Deploy Production
 
@@ -39,8 +41,8 @@ jobs:
           export-env: true
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          DOCKER_USERNAME: 'op://your-app/github-secrets/DOCKER_USERNAME'
-          DOCKER_PASSWORD: 'op://your-app/github-secrets/DOCKER_PASSWORD'
+          DOCKER_USERNAME: 'op://your-vault/github-secrets/DOCKER_USERNAME'
+          DOCKER_PASSWORD: 'op://your-vault/github-secrets/DOCKER_PASSWORD'
 
       - name: Install 1Password CLI
         uses: 1password/install-cli-action@v4
@@ -84,11 +86,11 @@ jobs:
           export-env: true
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          REMOTE_HOST: 'op://your-app/github-secrets/REMOTE_HOST'
-          REMOTE_USER: 'op://your-app/github-secrets/REMOTE_USER'
-          DOCKER_USERNAME: 'op://your-app/github-secrets/DOCKER_USERNAME'
-          DOCKER_PASSWORD: 'op://your-app/github-secrets/DOCKER_PASSWORD'
-          SSH_PRIVATE_KEY: 'op://your-app/github-secrets/SSH_PRIVATE_KEY'
+          REMOTE_HOST: 'op://your-vault/github-secrets/REMOTE_HOST'
+          REMOTE_USER: 'op://your-vault/github-secrets/REMOTE_USER'
+          DOCKER_USERNAME: 'op://your-vault/github-secrets/DOCKER_USERNAME'
+          DOCKER_PASSWORD: 'op://your-vault/github-secrets/DOCKER_PASSWORD'
+          SSH_PRIVATE_KEY: 'op://your-vault/github-secrets/SSH_PRIVATE_KEY'
 
       - name: Add tag version to .env file
         run: echo "TAG_VERSION=${{ env.TAG_VERSION }}" > .env
