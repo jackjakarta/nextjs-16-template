@@ -1,7 +1,7 @@
-# replace "yourimage" with replace all your docker image name
-# replace "yourstack" with replace all with your stack name
-# replace "your-vault" with replace all with your 1password vault name
-# replace "yourappdir" with replace all with your app dir on the remote server
+# replace "yourimage" using "replace all" with your docker image name
+# replace "yourstack" using "replace all" with your stack name
+# replace "your-vault" using "replace all" with your 1password vault name
+# replace "yourappdir" using "replace all" with your app dir on the remote server
 
 name: Build and Deploy Production
 
@@ -17,6 +17,10 @@ on:
         required: true
         default: ''
 
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,7 +31,7 @@ jobs:
       - name: Set up Docker image tags
         id: vars
         run: |
-          echo "TAG_VERSION=${{ github.event.inputs.tag || github.ref_name }}" >> $GITHUB_ENV
+          echo "TAG_VERSION=${{ inputs.tag || github.ref_name }}" >> $GITHUB_ENV
 
       - name: Checkout code
         uses: actions/checkout@v6
@@ -75,7 +79,7 @@ jobs:
       - name: Set up Docker image tags
         id: vars
         run: |
-          echo "TAG_VERSION=${{ github.event.inputs.tag || github.ref_name }}" >> $GITHUB_ENV
+          echo "TAG_VERSION=${{ inputs.tag || github.ref_name }}" >> $GITHUB_ENV
 
       - name: Checkout code
         uses: actions/checkout@v6
