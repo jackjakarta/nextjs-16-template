@@ -187,19 +187,21 @@ export class JobWorker {
       console.error(
         `[JobWorker] Job ${job.id} (${job.type}) is dead after ${job.attempts} attempts`,
       );
-    } else {
-      const backoffMs = Math.pow(2, job.attempts) * 5_000;
-      const runAt = new Date(Date.now() + backoffMs);
 
-      await db
-        .update(jobTable)
-        .set({ status: 'pending', lastError: error, runAt })
-        .where(eq(jobTable.id, job.id));
-
-      console.warn(
-        `[JobWorker] Job ${job.id} (${job.type}) retry #${job.attempts} scheduled for ${runAt.toISOString()}`,
-      );
+      return;
     }
+
+    const backoffMs = Math.pow(2, job.attempts) * 5_000;
+    const runAt = new Date(Date.now() + backoffMs);
+
+    await db
+      .update(jobTable)
+      .set({ status: 'pending', lastError: error, runAt })
+      .where(eq(jobTable.id, job.id));
+
+    console.warn(
+      `[JobWorker] Job ${job.id} (${job.type}) retry #${job.attempts} scheduled for ${runAt.toISOString()}`,
+    );
   }
 
   private async recoverStaleJobs() {
