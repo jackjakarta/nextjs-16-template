@@ -2,6 +2,7 @@
 
 import { setCookie } from '@/utils/cookies';
 import { appLocaleSchema, type AppLocale } from '@/utils/types';
+import { revalidatePath } from 'next/cache';
 
 export async function setLocaleCookieAction(locale: AppLocale) {
   const parsed = appLocaleSchema.safeParse(locale);
@@ -13,4 +14,6 @@ export async function setLocaleCookieAction(locale: AppLocale) {
     path: '/',
     maxAge: 180 * 24 * 60 * 60,
   });
+
+  revalidatePath('/');
 }
