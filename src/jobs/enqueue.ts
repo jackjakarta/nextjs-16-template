@@ -4,8 +4,6 @@ import { sql } from 'drizzle-orm';
 
 import { getJobDefinition, type JobType } from './registry';
 
-import './definitions';
-
 type EnqueueOptions = {
   maxAttempts?: number;
   runAt?: Date;
@@ -22,8 +20,8 @@ export async function enqueueJob<TPayload extends Record<string, unknown>>(
     await tx.insert(jobTable).values({
       type,
       payload,
-      maxAttempts: options?.maxAttempts ?? definition?.maxAttempts ?? 3,
-      runAt: options?.runAt ?? new Date(),
+      maxAttempts: options?.maxAttempts ?? definition?.maxAttempts,
+      runAt: options?.runAt,
     });
 
     await tx.execute(sql`NOTIFY job_available`);

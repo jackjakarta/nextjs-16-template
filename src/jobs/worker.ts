@@ -96,7 +96,8 @@ export class JobWorker {
 
     try {
       const job = await this.claimJob();
-      if (!job) {
+
+      if (job === null) {
         this.processing = false;
         return;
       }
@@ -136,7 +137,7 @@ export class JobWorker {
   private async executeJob(job: JobModel) {
     const definition = getJobDefinition(job.type);
 
-    if (!definition) {
+    if (definition === undefined) {
       console.error(`[JobWorker] No handler registered for job type: ${job.type}`);
       await this.failJob(job, `No handler registered for job type: ${job.type}`);
       return;

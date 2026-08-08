@@ -13,7 +13,7 @@ export const jobTable = jobsSchema.table(
     id: uuid('id').defaultRandom().primaryKey(),
     type: text('type').$type<JobType>().notNull(),
     payload: jsonb('payload').notNull().$type<Record<string, unknown>>(),
-    status: text('status').$type<JobStatus>().notNull().default('pending'),
+    status: text('status').$type<JobStatus>().default('pending').notNull(),
     attempts: integer('attempts').default(0).notNull(),
     maxAttempts: integer('max_attempts').default(3).notNull(),
     lastError: text('last_error'),
@@ -21,6 +21,10 @@ export const jobTable = jobsSchema.table(
     startedAt: timestamp('started_at', { withTimezone: true }),
     completedAt: timestamp('completed_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
   },
   (table) => [
     index('job_status_run_at_idx').on(table.status, table.runAt),

@@ -1,7 +1,5 @@
 import { JobWorker } from './worker';
 
-export { defineJob } from './registry';
-
 export async function startWorker() {
   // side-effect imports register handlers
   await import('./definitions');
