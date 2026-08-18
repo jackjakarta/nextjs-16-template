@@ -1,7 +1,7 @@
 # replace "yourstack" with replace all with your stack name
 # replace "yourdomain.com" with replace all with your actual domain
 # replace "yourimage" with your docker image name
-# replace "youremail" with your actual email for certificate notifications
+# replace "your@email.com" with your actual email for certificate notifications
 
 services:
   traefik:
@@ -17,7 +17,7 @@ services:
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
       - --certificatesresolvers.myresolver.acme.tlschallenge=true
-      - --certificatesresolvers.myresolver.acme.email=youremail@protonmail.com
+      - --certificatesresolvers.myresolver.acme.email=your@email.com
       - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
     networks: [edge]
     ports:
@@ -48,9 +48,16 @@ services:
   web:
     image: ghcr.io/jackjakarta/yourimage:${TAG_VERSION}
     command: ['node', 'server.js']
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
     networks: [edge]
     env_file:
       - .env
+    stop_grace_period: 30s
     deploy:
       replicas: 2
       placement:
