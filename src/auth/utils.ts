@@ -1,5 +1,4 @@
 import { auth } from '@/auth';
-import { dbGetUserById } from '@/db/functions/user';
 import { type UserModel } from '@/db/schema/auth';
 import { headers } from 'next/headers';
 import { redirect, RedirectType } from 'next/navigation';
@@ -23,12 +22,7 @@ export async function getValidSession() {
 }
 
 export async function getUser(): Promise<UserModel> {
-  const session = await getValidSession();
-  const user = await dbGetUserById({ userId: session.user.id });
+  const { user } = await getValidSession();
 
-  if (user === undefined) {
-    redirect('/login', RedirectType.replace);
-  }
-
-  return user;
+  return { ...user, image: user.image ?? null };
 }
