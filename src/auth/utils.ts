@@ -22,7 +22,12 @@ export async function getValidSession() {
 }
 
 export async function getUser(): Promise<UserModel> {
-  const { user } = await getValidSession();
+  const { user: _user } = await getValidSession();
 
-  return { ...user, image: user.image ?? null };
+  const user = {
+    ..._user,
+    image: _user.image ?? null,
+  };
+
+  return user;
 }
