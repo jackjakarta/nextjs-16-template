@@ -108,9 +108,9 @@ services:
 
         # traefik load balances across task ips and never reads docker health,
         # so it needs its own check to drop a sick replica from rotation
-        - traefik.http.services.hotelapp.loadbalancer.healthcheck.path=/api/health
-        - traefik.http.services.hotelapp.loadbalancer.healthcheck.interval=10s
-        - traefik.http.services.hotelapp.loadbalancer.healthcheck.timeout=3s
+        - traefik.http.services.yourstack.loadbalancer.healthcheck.path=/api/health
+        - traefik.http.services.yourstack.loadbalancer.healthcheck.interval=10s
+        - traefik.http.services.yourstack.loadbalancer.healthcheck.timeout=3s
 
 networks:
   edge:
