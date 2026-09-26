@@ -32,9 +32,17 @@ pnpm db:migrate           # Apply migrations
 pnpm db:studio            # Drizzle Studio
 ```
 
-Local Postgres: `docker compose up -d postgres`. Node version is pinned in `.nvmrc` (`fnm use`), package manager via `corepack`.
+First-time setup: `fnm use` (Node pinned in `.nvmrc`) → `corepack enable && corepack prepare` → `pnpm i` → `cp .env.example .env` → `docker compose up -d postgres` → `pnpm db:generate && pnpm db:migrate`. `src/db/migrations` doesn't exist until the first `db:generate`.
 
-CI (`.github/workflows/static-checks.yml`) runs the same gates as `pnpm checks` plus the audit.
+CI: `ci.yml` (PRs to `main`, skipped for drafts) calls `static-checks.yml`, which runs the same gates as `pnpm checks` plus the audit — not the build.
+
+## Deployment
+
+`build-and-deploy-production.yml` runs on a pushed `*.*.*` tag (or manual dispatch). It injects secrets from 1Password (`op inject -i .env.op`; `.env.op` holds `op://` references and is meant to be committed — `.gitignore` whitelists it — but the template doesn't ship one yet, so create it before the first deploy), builds the standalone `Dockerfile` image to ghcr.io, then SSH-deploys `docker-compose.production.yml` as a Docker Swarm stack behind Traefik (2 `web` replicas, start-first rolling updates, healthcheck on `/api/health`). Both workflow and compose file contain placeholders (`yourimage`, `yourstack`, `your-vault`, `yourappdir`, `yourdomain.com`) to replace per project.
+
+- Every `web` replica runs its own job worker (via `instrumentation.ts`); `SKIP LOCKED` claiming is what makes that safe — keep it that way.
+- The runtime image contains only the standalone output (no `drizzle-kit`), and the deploy doesn't run migrations — apply them separately.
+- Keep `/api/health` unauthenticated; both Docker and Traefik probe it.
 
 ## Architecture
 
@@ -46,6 +54,8 @@ CI (`.github/workflows/static-checks.yml`) runs the same gates as `pnpm checks` 
 - `api/[[...route]]/` — Hono catch-all (all REST endpoints, including `/api/health`)
 
 Root `layout.tsx` wires fonts, `ThemeProvider` (next-themes), and `NextIntlClientProvider`.
+
+Template scaffolding meant to be copied then removed: the `example` route group (stub `/:id`, `PUT`, `DELETE` handlers), `use-example-query.ts`, and the `test-job` job definition.
 
 **API layer (Hono).** REST endpoints go through one Hono app, not per-folder Next.js route handlers:
 
