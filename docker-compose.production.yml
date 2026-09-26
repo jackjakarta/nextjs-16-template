@@ -46,15 +46,19 @@ services:
         condition: on-failure
 
   web:
-    image: ghcr.io/jackjakarta/yourimage:${TAG_VERSION}
+    image: yourimage:${TAG_VERSION}
     command: ['node', 'server.js']
     healthcheck:
-      test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/api/health']
-      interval: 5s
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/api/health']
+      interval: 15s
       timeout: 3s
       retries: 3
-      start_period: 10s
+      start_period: 30s
     networks: [edge]
+    environment:
+      # docker sets HOSTNAME to the container id and next standalone binds to it,
+      # which leaves loopback unreachable for the healthcheck.
+      - HOSTNAME=0.0.0.0
     env_file:
       - .env
     stop_grace_period: 30s
@@ -75,7 +79,7 @@ services:
         parallelism: 1
         delay: 10s
         failure_action: rollback
-        monitor: 20s
+        monitor: 75s
         max_failure_ratio: 0.2
       rollback_config:
         order: stop-first
@@ -101,6 +105,12 @@ services:
         - traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\.(.*)
         - traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}
         - traefik.http.middlewares.www-redirect.redirectregex.permanent=true
+
+        # traefik load balances across task ips and never reads docker health,
+        # so it needs its own check to drop a sick replica from rotation
+        - traefik.http.services.hotelapp.loadbalancer.healthcheck.path=/api/health
+        - traefik.http.services.hotelapp.loadbalancer.healthcheck.interval=10s
+        - traefik.http.services.hotelapp.loadbalancer.healthcheck.timeout=3s
 
 networks:
   edge:
